@@ -1,36 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db} from '../firebaseconfig';
+import { addDoc, collection, deleteDoc, getDocs,doc } from 'firebase/firestore';
 import BillModal from './BillModal';
+
 import PrintBillPage from './PrintBillPage';
 
 const Bill = () => {
   const [bills, setBills] = useState([]);
+  const usersCollectionRef= collection(db,"user")
   const [editableIndex, setEditableIndex] = useState(null);
   const [selectedBill, setSelectedBill] = useState(null);
+  const [fetchData, setFetchData] = useState(true);
+  const [search,setSearch]= useState("")
+  useEffect(() => {
+    const debounceFetchData = setTimeout(() => {
+      setFetchData(true);
+    }, 1000); // Fetch data every 1 second
 
-  const addBill = (event) => {
-    event.preventDefault();
-    const { sno, billNo, customerName, waterCanCount, amountPerCan, amountPerBox, waterBoxCount, itemNames, itemName } = event.target.elements;
-
-    const newBill = {
-      sno: sno.value,
-      billNo: billNo.value,
-      customerName: customerName.value,
-      waterCanCount: waterCanCount.value,
-      amountPerCan: amountPerCan.value,
-      itemName: itemName.value,
-      amountPerBox: amountPerBox.value,
-      waterBoxCount: waterBoxCount.value,
-      itemNames: itemNames.value
+    return () => {
+      clearTimeout(debounceFetchData);
     };
+  }, [fetchData]);
 
-    setBills((prevBills) => [...prevBills, newBill]);
+  useEffect(() => {
+    if (fetchData) {
+      const getUser = async () => {
+        const data = await getDocs(usersCollectionRef);
+        setBills(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setFetchData(false);
+      };
 
-    event.target.reset();
+      getUser();
+    }
+  }, [fetchData, usersCollectionRef]);
+const addBill = async (event) => {
+  event.preventDefault();
+
+  const {
+    sno,
+    billNo,
+    customerName,
+    waterCanCount,
+    amountPerCan,
+    itemName,
+    amountPerBox,
+    waterBoxCount,
+    itemNames,
+  } = event.target.elements;
+
+  const newBill = {
+    sno: sno.value,
+    billNo: billNo.value,
+    customerName: customerName.value,
+    waterCanCount: waterCanCount.value,
+    amountPerCan: amountPerCan.value,
+    itemName: itemName.value,
+    amountPerBox: amountPerBox.value,
+    waterBoxCount: waterBoxCount.value,
+    itemNames: itemNames.value,
+    // Add other fields with their corresponding values
   };
 
-  const deleteBill = (index) => {
+  try {
+    await addDoc(usersCollectionRef, newBill);
+    console.log('Bill added successfully!');
+  } catch (error) {
+    console.error('Error adding bill:', error);
+  }
+
+  event.target.reset();
+};
+ 
+
+const deleteBill = async (index, billId) => {
+  try {
+    const userDoc=doc(db,"user",billId);
+    await deleteDoc(userDoc)
+    // Delete the bill from Firestore
+    
+
+    // Remove the bill from local state
     setBills((prevBills) => prevBills.filter((_, i) => i !== index));
-  };
+
+    console.log('Bill deleted successfully!');
+  } catch (error) {
+    console.error('Error deleting bill:', error);
+  }
+};
 
   const editBill = (index) => {
     setEditableIndex(index);
@@ -50,7 +106,9 @@ const Bill = () => {
   const handleBack = () => {
     setSelectedBill(null);
   };
+  
 
+  
   if (selectedBill) {
     return <PrintBillPage bill={selectedBill} onBack={handleBack} />;
   }
@@ -101,6 +159,17 @@ const Bill = () => {
 </div>
 <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Add Bill</button>
 </form>
+<div className="flex items-center mb-4">
+        <label htmlFor="search" className="font-semibold mr-2">
+          Search Customer Name:
+        </label>
+        <input
+          type="text"
+          id="search"
+          onChange={(e)=>setSearch(e.target.value.toLocaleLowerCase())}
+          className="border-gray-300 border-2 rounded py-2 px-4"
+        />
+      </div>
 
   <table className="w-full">
     <thead>
@@ -121,7 +190,9 @@ const Bill = () => {
 </tr>
 </thead>
 <tbody>
-{bills.map((bill, index) => (
+{bills.sort((a, b) => a.sno - b.sno).filter((bill)=>{
+  return search.toLocaleLowerCase() === ''? bill: bill.customerName.toLocaleLowerCase().includes(search)
+}).map((bill, index) => (
 <tr key={index}>
 <td className="py-2 px-4 border-b border-gray-300">{bill.sno}</td>
 <td className="py-2 px-4 border-b border-gray-300">{bill.billNo}</td>
@@ -135,17 +206,19 @@ const Bill = () => {
 <td className="py-2 px-4 border-b border-gray-300">{bill.waterCanCount * bill.amountPerCan+bill.waterBoxCount*bill.amountPerBox}</td>
 <td className="py-2 px-4 border-b border-gray-300">
 {editableIndex === index ? (
-<BillModal
-bill={bill}
-onSave={(updatedBill) => saveBillChanges(updatedBill, index)}
-onCancel={() => setEditableIndex(null)}
+  <BillModal
+  bill={bill}
+  onSave={(updatedBill) => saveBillChanges(updatedBill, index)}
+  onCancel={() => setEditableIndex(null)}
+  db={db}
 />
+
 ) : (
 <button className="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600" onClick={() => editBill(index)}>Edit</button>
 )}
 </td>
 <td className="py-2 px-4 border-b border-gray-300">
-<button className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600" onClick={() => deleteBill(index)}>Delete</button>
+<button className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600" onClick={() => deleteBill(index,bill.id)}>Delete</button>
 </td>
 <td className="py-2 px-4 border-b border-gray-300">
 <button className="bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600" onClick={() => printBill(bill)}>Print Bill</button>

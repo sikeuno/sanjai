@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { updateDoc, doc } from 'firebase/firestore';
 
-const BillModal = ({ bill, onSave, onCancel }) => {
+const BillModal = ({ bill, onSave, onCancel, db }) => {
   const [updatedBill, setUpdatedBill] = useState({ ...bill });
 
   const handleInputChange = (event) => {
@@ -8,10 +9,17 @@ const BillModal = ({ bill, onSave, onCancel }) => {
     setUpdatedBill((prevBill) => ({ ...prevBill, [name]: value }));
   };
 
-  const handleSaveChanges = (event) => {
+  const handleSaveChanges = async (event) => {
     event.preventDefault();
-    onSave(updatedBill);
+    try {
+      const billDocRef = doc(db, 'user', updatedBill.id);
+      await updateDoc(billDocRef, updatedBill);
+      onSave(updatedBill);
+    } catch (error) {
+      console.error('Error updating bill:', error);
+    }
   };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -37,6 +45,14 @@ const BillModal = ({ bill, onSave, onCancel }) => {
           <div className="mb-4">
             <label htmlFor="amountPerCan" className="block text-white font-semibold mb-1">Amount Per Can:</label>
             <input type="number" name="amountPerCan" value={updatedBill.amountPerCan} onChange={handleInputChange} required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="waterCanCount" className="block text-white font-semibold mb-1">No. of waterBoxCount:</label>
+            <input type="number" name="waterBoxCount" value={updatedBill.waterBoxCount} onChange={handleInputChange} required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="amountPerCan" className="block text-white font-semibold mb-1">Amount Per Box:</label>
+            <input type="number" name="amountPerBox" value={updatedBill.amountPerBox} onChange={handleInputChange} required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
           </div>
           <div className="flex justify-end">
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mr-2">Save</button>
