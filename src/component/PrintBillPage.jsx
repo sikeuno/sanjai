@@ -49,7 +49,7 @@ const PrintBillPage = ({ bill, onBack }) => {
     <tbody>
       <tr>
         <td className="py-2 px-2 text-center border border-black">{bill.sno}</td>
-        <td className="py-2 px-4 text-center border border-black"><pre></pre>{bill.itemName}</pre></td>
+        <td className="py-2 px-4 text-center border border-black"><pre>{bill.itemName}</pre></td>
         <td className="py-2 px-2 text-center border border-black">{bill.waterCanCount}</td>
         <td className="py-2 px-2 text-center border border-black">{bill.amountPerCan}</td>
         <td className="py-2 px-2 text-center border border-black">{bill.waterCanCount * bill.amountPerCan}</td>
