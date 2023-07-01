@@ -197,7 +197,7 @@ const deleteBill = async (index, billId) => {
 <td className="py-2 px-4 border-b border-gray-300">{bill.sno}</td>
 <td className="py-2 px-4 border-b border-gray-300">{bill.billNo}</td>
 <td className="py-2 px-4 border-b border-gray-300">{bill.customerName}</td>
-<td className="py-2 px-4 border-b border-gray-300">{bill.itemName}</td>
+<td className="py-2 px-4 border-b border-gray-300"> <pre>{bill.itemName}</pre></td>
 <td className="py-2 px-4 border-b border-gray-300">{bill.waterCanCount}</td>
 <td className="py-2 px-4 border-b border-gray-300">{bill.amountPerCan}</td>
 <td className="py-2 px-4 border-b border-gray-300">{bill.itemNames}</td>
