@@ -35,8 +35,8 @@ const BillModal = ({ bill, onSave, onCancel, db }) => {
             <input type="text" name="billNo" value={updatedBill.billNo} onChange={handleInputChange} required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
           </div>
           <div className="mb-4">
-            <label htmlFor="customerName" className="block text-white font-semibold mb-1">Customer Name:</label>
-            <input type="text" name="customerName" value={updatedBill.customerName} onChange={handleInputChange} required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
+            <label htmlFor="itemName" className="block text-white font-semibold mb-1">Customer Name:</label>
+            <input type="text" name="itemName" value={updatedBill.itemName} onChange={handleInputChange} required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
           </div>
           <div className="mb-4">
             <label htmlFor="waterCanCount" className="block text-white font-semibold mb-1">No. of Water Cans:</label>
