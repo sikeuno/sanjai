@@ -130,11 +130,11 @@ const deleteBill = async (index, billId) => {
           <div className="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
             <label htmlFor="customerName" className="block font-semibold">Customer Name:</label>
             <input type="text" id="customerName" required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
-</div>
-<div className="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
+</div><div className="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
   <label htmlFor="itemName" className="block font-semibold">Item Name:</label>
-  <input type="text" id="itemName" required className="w-full border-gray-300 border-2 rounded py-2 px-4" />
+  <textarea id="itemName" required className="w-full h-32 border-gray-300 border-2 rounded py-2 px-4 resize-none"></textarea>
 </div>
+
 
 <div className="w-full md:w-1/2 lg:w-1/3 px-2 mb-4">
 <label htmlFor="waterCanCount" className="block font-semibold">No. of Water Cans:</label>
