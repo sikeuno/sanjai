@@ -22,13 +22,13 @@ const PrintBillPage = ({ bill, onBack }) => {
       <p>BUS DEPO-MANAPPARAI</p>
       <p>9865404049-9944348214</p>
      </div>
-     <div className='px-4 border-l-2 border-black'>
+{/*      <div className='px-4 border-l-2 border-black'>
       <p className=' font-bold'>ESTIMATE</p>
       <p>NO:{bill.billNo}</p>
       <p>DATE:{formattedCurrentDate}</p>
       <p>PAY MODE:CASH</p>
       <p>DUEDATE:{formattedDueDate}</p>
-     </div>
+     </div> */}
      </div>
      <div className='px-4 py-2 h-96'>
       <p><span className='font-bold'>To:</span>{bill.customerName}</p>
