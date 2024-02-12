@@ -9,8 +9,8 @@ const PrintBillPage = ({ bill, onBack }) => {
   dueDate.setDate(currentDate.getDate() - 1)
   dueDate.setMonth(currentDate.getMonth() + 1);
 
-  const formattedCurrentDate = currentDate.toLocaleDateString();
-  const formattedDueDate = dueDate.toLocaleDateString();
+  // const formattedCurrentDate = currentDate.toLocaleDateString();
+  // const formattedDueDate = dueDate.toLocaleDateString();
 
   return (
     <div className="p-8 ">
